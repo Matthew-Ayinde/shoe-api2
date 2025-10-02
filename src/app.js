@@ -37,6 +37,9 @@ const healthRoutes = require("./routes/health")
 const couponRoutes = require("./routes/coupons")
 const flashSaleRoutes = require("./routes/flash-sales")
 const staffRoutes = require("./routes/staff")
+const reviewRoutes = require("./routes/reviews")
+const wishlistRoutes = require("./routes/wishlists")
+const analyticsRoutes = require("./routes/analytics")
 
 // Import middleware
 const errorHandler = require("./middleware/errorHandler")
@@ -233,6 +236,15 @@ app.use("/api/staff", staffRoutes)
 
 // Health check routes - system monitoring
 app.use("/api/health", healthRoutes)
+
+// Review routes - handles product reviews and ratings
+app.use("/api/reviews", reviewRoutes)
+
+// Wishlist routes - handles user wishlists and favorites
+app.use("/api/wishlists", wishlistRoutes)
+
+// Analytics routes - handles reporting and business intelligence
+app.use("/api/analytics", analyticsRoutes)
 
 // ============================================================================
 // ERROR HANDLING

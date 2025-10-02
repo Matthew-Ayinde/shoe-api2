@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to the Admin Team!</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f8f9fa;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .admin-badge {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 15px;
+            display: inline-block;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .message {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #555555;
+        }
+        
+        .admin-privileges {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .admin-privileges h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .admin-privileges h3::before {
+            content: "🔑";
+            margin-right: 10px;
+        }
+        
+        .privilege-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .privilege-item {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .privilege-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .privilege-title {
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .privilege-description {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .quick-links {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+        }
+        
+        .quick-links h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .link-item {
+            background-color: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .link-item a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            display: block;
+        }
+        
+        .link-item:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .security-notice {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #f39c12;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        .security-notice h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .security-notice h3::before {
+            content: "🔒";
+            margin-right: 10px;
+        }
+        
+        .security-notice ul {
+            color: #856404;
+            padding-left: 20px;
+        }
+        
+        .security-notice li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+            color: white;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .footer p {
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+        
+        .footer a {
+            color: #dc3545;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0;
+                box-shadow: none;
+            }
+            
+            .header, .content, .footer {
+                padding: 30px 20px;
+            }
+            
+            .privilege-grid,
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎉 Welcome to the Team!</h1>
+            <p>You've been granted administrator access</p>
+            <div class="admin-badge">ADMINISTRATOR</div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="content">
+            <div class="greeting">
+                Hi {{firstName}},
+            </div>
+            
+            <div class="message">
+                <p>Congratulations! You've been granted administrator access to the {{companyName}} platform. As an admin, you have full control over the system and can manage all aspects of the business.</p>
+                
+                <p>This role comes with significant responsibilities and powerful tools to help you manage the platform effectively.</p>
+            </div>
+            
+            <!-- Admin Privileges -->
+            <div class="admin-privileges">
+                <h3>Your Administrator Privileges</h3>
+                <div class="privilege-grid">
+                    <div class="privilege-item">
+                        <div class="privilege-icon">👥</div>
+                        <div class="privilege-title">User Management</div>
+                        <div class="privilege-description">Create, edit, and manage all user accounts, roles, and permissions</div>
+                    </div>
+                    <div class="privilege-item">
+                        <div class="privilege-icon">📦</div>
+                        <div class="privilege-title">Product Management</div>
+                        <div class="privilege-description">Add, edit, and manage all products, inventory, and categories</div>
+                    </div>
+                    <div class="privilege-item">
+                        <div class="privilege-icon">📊</div>
+                        <div class="privilege-title">Analytics & Reports</div>
+                        <div class="privilege-description">Access comprehensive analytics, sales reports, and business insights</div>
+                    </div>
+                    <div class="privilege-item">
+                        <div class="privilege-icon">🛒</div>
+                        <div class="privilege-title">Order Management</div>
+                        <div class="privilege-description">View, process, and manage all customer orders and transactions</div>
+                    </div>
+                    <div class="privilege-item">
+                        <div class="privilege-icon">💰</div>
+                        <div class="privilege-title">Financial Controls</div>
+                        <div class="privilege-description">Manage payments, refunds, pricing, and financial settings</div>
+                    </div>
+                    <div class="privilege-item">
+                        <div class="privilege-icon">⚙️</div>
+                        <div class="privilege-title">System Settings</div>
+                        <div class="privilege-description">Configure platform settings, integrations, and system preferences</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Links -->
+            <div class="quick-links">
+                <h3>🚀 Quick Access Links</h3>
+                <div class="links-grid">
+                    <div class="link-item">
+                        <a href="{{baseUrl}}/admin/dashboard">📊 Admin Dashboard</a>
+                    </div>
+                    <div class="link-item">
+                        <a href="{{baseUrl}}/admin/users">👥 User Management</a>
+                    </div>
+                    <div class="link-item">
+                        <a href="{{baseUrl}}/admin/products">📦 Product Management</a>
+                    </div>
+                    <div class="link-item">
+                        <a href="{{baseUrl}}/admin/orders">🛒 Order Management</a>
+                    </div>
+                    <div class="link-item">
+                        <a href="{{baseUrl}}/admin/analytics">📈 Analytics</a>
+                    </div>
+                    <div class="link-item">
+                        <a href="{{baseUrl}}/admin/settings">⚙️ Settings</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Security Notice -->
+            <div class="security-notice">
+                <h3>Security & Best Practices</h3>
+                <ul>
+                    <li>Use a strong, unique password for your admin account</li>
+                    <li>Enable two-factor authentication for enhanced security</li>
+                    <li>Never share your admin credentials with anyone</li>
+                    <li>Log out of admin sessions when not in use</li>
+                    <li>Regularly review user permissions and access logs</li>
+                    <li>Keep your contact information up to date</li>
+                    <li>Report any suspicious activity immediately</li>
+                </ul>
+            </div>
+            
+            <!-- Call to Action -->
+            <div class="cta-section">
+                <a href="{{baseUrl}}/admin/dashboard" class="cta-button">
+                    🎯 Access Admin Dashboard
+                </a>
+            </div>
+            
+            <div class="message">
+                <p><strong>Need help getting started?</strong></p>
+                <p>Our admin documentation and training materials are available to help you make the most of your administrator privileges. If you have any questions or need assistance, don't hesitate to reach out to our technical support team.</p>
+                
+                <p style="margin-top: 20px;"><strong>Administrator Resources:</strong></p>
+                <ul style="margin-top: 10px; padding-left: 20px;">
+                    <li>📚 Admin documentation and user guides</li>
+                    <li>🎥 Video tutorials and training materials</li>
+                    <li>💬 Direct access to technical support</li>
+                    <li>📞 Priority customer service line</li>
+                    <li>🔧 System maintenance notifications</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>{{companyName}} Admin Team</strong></p>
+            <p>Empowering administrators with powerful tools</p>
+            
+            <p style="font-size: 12px; margin-top: 20px;">
+                Admin support: <a href="mailto:admin-support@{{companyName}}.com">admin-support@{{companyName}}.com</a><br>
+                Emergency contact: <a href="tel:+1-800-ADMIN-1">1-800-ADMIN-1</a>
+            </p>
+            
+            <p style="font-size: 12px; margin-top: 15px;">
+                This email contains sensitive information. Please keep it secure.<br>
+                © {{currentYear}} {{companyName}}. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

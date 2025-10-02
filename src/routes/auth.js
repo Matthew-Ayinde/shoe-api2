@@ -47,14 +47,10 @@ router.post("/register-admin", validateRegister, async (req, res) => {
       })
     }
 
-    // Hash password (seedData does this too; be consistent)
-    const hashedPassword = await password
-
-
-    // Create user (admin)
+    // Create user (admin) - password will be hashed by the pre-save middleware
     const user = new User({
       email,
-      password: hashedPassword,
+      password,
       profile: {
         firstName,
         lastName,
@@ -122,14 +118,10 @@ router.post("/register-staff", validateRegister, async (req, res) => {
       })
     }
 
-    // Hash password (seedData does this too; be consistent)
-    const hashedPassword = await password
-
-
-    // Create user (staff)
+    // Create user (staff) - password will be hashed by the pre-save middleware
     const user = new User({
       email,
-      password: hashedPassword,
+      password,
       profile: {
         firstName,
         lastName,

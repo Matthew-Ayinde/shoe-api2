@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Don't Forget Your Items!</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f8f9fa;
+        }
+        
+        .email-container {
+            max-width: 650px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .message {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #555555;
+        }
+        
+        .cart-reminder {
+            background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .cart-reminder h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .cart-reminder p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .cart-items {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .cart-items h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .cart-items h3::before {
+            content: "🛒";
+            margin-right: 10px;
+        }
+        
+        .item-list {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 20px;
+        }
+        
+        .item-details {
+            flex: 1;
+        }
+        
+        .item-name {
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .item-brand {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        
+        .item-variant {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .item-price {
+            color: #28a745;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .item-quantity {
+            background-color: #e9ecef;
+            color: #495057;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 15px;
+        }
+        
+        .cart-total {
+            background-color: #28a745;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .cart-total h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .cart-total p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+            color: white;
+            text-decoration: none;
+            padding: 18px 36px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 18px;
+            transition: transform 0.2s ease;
+            margin-bottom: 15px;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .secondary-cta {
+            display: block;
+            color: #6f42c1;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .incentives {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .incentive-item {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        
+        .incentive-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .incentive-title {
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .incentive-description {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .urgency-section {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #f39c12;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        .urgency-section h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .urgency-section h3::before {
+            content: "⏰";
+            margin-right: 10px;
+        }
+        
+        .urgency-section p {
+            color: #856404;
+            font-size: 14px;
+        }
+        
+        .recommendations {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .recommendations h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+        
+        .recommendation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .recommendation-item {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        
+        .recommendation-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .recommendation-name {
+            color: #2c3e50;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .recommendation-price {
+            color: #28a745;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .footer p {
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+        
+        .footer a {
+            color: #6f42c1;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0;
+                box-shadow: none;
+            }
+            
+            .header, .content, .footer {
+                padding: 30px 20px;
+            }
+            
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+            
+            .item-image {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .item-quantity {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            
+            .incentives {
+                grid-template-columns: 1fr;
+            }
+            
+            .recommendation-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🛒 Don't Forget Your Items!</h1>
+            <p>Your perfect shoes are waiting for you</p>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="content">
+            <div class="greeting">
+                Hi {{firstName}},
+            </div>
+            
+            <div class="message">
+                <p>We noticed you left some amazing shoes in your cart! We've saved them for you, but they won't stay available forever.</p>
+            </div>
+            
+            <!-- Cart Reminder -->
+            <div class="cart-reminder">
+                <h2>🎯 Your Cart is Waiting</h2>
+                <p>Complete your purchase in just a few clicks</p>
+            </div>
+            
+            <!-- Cart Items -->
+            <div class="cart-items">
+                <h3>Items in Your Cart</h3>
+                <div class="item-list">
+                    {{#each cart.items}}
+                    <div class="cart-item">
+                        {{#if product.images.[0]}}
+                        <img src="{{product.images.[0]}}" alt="{{product.name}}" class="item-image">
+                        {{/if}}
+                        <div class="item-details">
+                            <div class="item-name">{{product.name}}</div>
+                            <div class="item-brand">{{product.brand}}</div>
+                            <div class="item-variant">{{variant.color}} • Size {{variant.size}}</div>
+                            <div class="item-price">{{currency variant.price}}</div>
+                        </div>
+                        <div class="item-quantity">Qty: {{quantity}}</div>
+                    </div>
+                    {{/each}}
+                </div>
+                
+                <div class="cart-total">
+                    <h3>Total: {{currency cart.total}}</h3>
+                    <p>{{cart.itemCount}} item{{#if_eq cart.itemCount 1}}{{else}}s{{/if_eq}} • Free shipping on orders over $75</p>
+                </div>
+            </div>
+            
+            <!-- Call to Action -->
+            <div class="cta-section">
+                <a href="{{baseUrl}}/cart" class="cta-button">
+                    🛍️ Complete Your Purchase
+                </a>
+                <br>
+                <a href="{{baseUrl}}/products" class="secondary-cta">
+                    Continue Shopping
+                </a>
+            </div>
+            
+            <!-- Incentives -->
+            <div class="incentives">
+                <div class="incentive-item">
+                    <div class="incentive-icon">🚚</div>
+                    <div class="incentive-title">Free Shipping</div>
+                    <div class="incentive-description">On orders over $75</div>
+                </div>
+                <div class="incentive-item">
+                    <div class="incentive-icon">🔄</div>
+                    <div class="incentive-title">Easy Returns</div>
+                    <div class="incentive-description">30-day return policy</div>
+                </div>
+                <div class="incentive-item">
+                    <div class="incentive-icon">🔒</div>
+                    <div class="incentive-title">Secure Checkout</div>
+                    <div class="incentive-description">SSL encrypted payments</div>
+                </div>
+                <div class="incentive-item">
+                    <div class="incentive-icon">⭐</div>
+                    <div class="incentive-title">Quality Guarantee</div>
+                    <div class="incentive-description">Authentic products only</div>
+                </div>
+            </div>
+            
+            <!-- Urgency Section -->
+            <div class="urgency-section">
+                <h3>Limited Time Offer</h3>
+                <p>Items in your cart are popular and may sell out soon. Complete your purchase now to secure your favorites at the current price.</p>
+            </div>
+            
+            <!-- Recommendations -->
+            {{#if recommendations}}
+            <div class="recommendations">
+                <h3>🌟 You Might Also Like</h3>
+                <div class="recommendation-grid">
+                    {{#each recommendations}}
+                    <div class="recommendation-item">
+                        {{#if images.[0]}}
+                        <img src="{{images.[0]}}" alt="{{name}}" class="recommendation-image">
+                        {{/if}}
+                        <div class="recommendation-name">{{name}}</div>
+                        <div class="recommendation-price">{{currency price}}</div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            {{/if}}
+            
+            <div class="message">
+                <p><strong>Need help with your order?</strong></p>
+                <p>Our customer service team is here to help! Contact us if you have any questions about sizing, shipping, or returns.</p>
+                
+                <p style="margin-top: 20px;"><strong>Why choose {{companyName}}?</strong></p>
+                <ul style="margin-top: 10px; padding-left: 20px;">
+                    <li>🏆 Premium quality footwear from top brands</li>
+                    <li>📞 Excellent customer service and support</li>
+                    <li>💳 Secure payment processing</li>
+                    <li>🌍 Worldwide shipping available</li>
+                    <li>👥 Trusted by thousands of customers</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>{{companyName}}</strong></p>
+            <p>Your trusted partner in premium footwear</p>
+            
+            <p style="font-size: 12px; margin-top: 20px;">
+                Don't want cart reminders? <a href="{{baseUrl}}/unsubscribe?email={{email}}&type=cart-reminders">Unsubscribe from cart reminders</a><br>
+                Questions? Contact us at <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>
+            </p>
+            
+            <p style="font-size: 12px; margin-top: 15px;">
+                © {{currentYear}} {{companyName}}. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

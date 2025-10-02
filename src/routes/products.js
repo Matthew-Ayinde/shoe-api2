@@ -6,6 +6,7 @@ const { isStaffOrAdmin } = require("../middleware/roles")
 const { validateProduct, validatePagination, validateObjectId } = require("../middleware/validation")
 const { uploadImage, deleteImage } = require("../config/cloudinary")
 const { getPaginationInfo, generateSKU } = require("../utils/helpers")
+const { trackProductViews, trackUserActivity, emitInventoryUpdates } = require("../middleware/realtime")
 
 const router = express.Router()
 
@@ -99,7 +100,7 @@ router.get("/", validatePagination, optionalAuth, async (req, res) => {
 // @desc    Get single product by ID or slug
 // @route   GET /api/products/:identifier
 // @access  Public
-router.get("/:identifier", optionalAuth, async (req, res) => {
+router.get("/:identifier", optionalAuth, trackProductViews(), async (req, res) => {
   try {
     const { identifier } = req.params
 

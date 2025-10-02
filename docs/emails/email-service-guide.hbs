@@ -1,0 +1,403 @@
+# Email Service Guide
+
+## Overview
+
+The Shoe Store API includes a comprehensive email service that handles all transactional and marketing emails. The service supports multiple email providers, professional HTML templates, bulk email processing, and advanced features like queuing and retry logic.
+
+## Features
+
+### Core Email Features
+- **Multiple Transport Providers** - Gmail, SendGrid, AWS SES, SMTP
+- **Professional HTML Templates** - Handlebars-based template engine
+- **Bulk Email Processing** - Rate-limited bulk email sending
+- **Email Queue Management** - Background processing with retry logic
+- **Template Engine** - Dynamic content with Handlebars helpers
+- **Attachment Support** - File attachments and inline images
+- **Email Tracking** - Open and click tracking capabilities
+- **Error Handling** - Comprehensive error handling and logging
+
+### Template System
+- **Handlebars Templates** - Dynamic content rendering
+- **Responsive Design** - Mobile-friendly email templates
+- **Brand Consistency** - Consistent styling across all emails
+- **Custom Helpers** - Currency, date formatting, conditionals
+- **Template Inheritance** - Shared layouts and components
+
+## Configuration
+
+### Environment Variables
+
+```env
+# Email Provider Configuration
+EMAIL_PROVIDER=gmail                    # gmail, sendgrid, ses, smtp
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-password
+EMAIL_FROM=noreply@shoestore.com
+EMAIL_FROM_NAME=Shoe Store
+
+# SendGrid Configuration (if using SendGrid)
+SENDGRID_API_KEY=your-sendgrid-api-key
+
+# AWS SES Configuration (if using SES)
+AWS_ACCESS_KEY_ID=your-aws-access-key
+AWS_SECRET_ACCESS_KEY=your-aws-secret-key
+AWS_REGION=us-east-1
+
+# SMTP Configuration (if using custom SMTP)
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=smtp-username
+SMTP_PASS=smtp-password
+
+# Application URLs
+CLIENT_URL=http://localhost:3000
+API_URL=http://localhost:5000
+COMPANY_NAME=Shoe Store
+SUPPORT_EMAIL=support@shoestore.com
+```
+
+### Provider Setup
+
+#### Gmail Setup
+1. Enable 2-factor authentication on your Gmail account
+2. Generate an app-specific password
+3. Use the app password in `EMAIL_PASS`
+
+#### SendGrid Setup
+1. Create a SendGrid account
+2. Generate an API key with mail send permissions
+3. Set `EMAIL_PROVIDER=sendgrid` and `SENDGRID_API_KEY`
+
+#### AWS SES Setup
+1. Set up AWS SES in your preferred region
+2. Verify your sending domain/email
+3. Create IAM credentials with SES send permissions
+4. Set `EMAIL_PROVIDER=ses` and AWS credentials
+
+## Email Service Usage
+
+### Basic Email Sending
+
+```javascript
+const { emailService, sendEmail } = require('../services/emailService')
+
+// Using the enhanced service
+const result = await emailService.sendEmail({
+  to: 'customer@example.com',
+  subject: 'Welcome to Our Store',
+  template: 'welcome',
+  data: {
+    firstName: 'John',
+    verificationToken: 'abc123'
+  }
+})
+
+// Using the legacy function
+await sendEmail({
+  to: 'customer@example.com',
+  subject: 'Custom Email',
+  html: '<h1>Hello World</h1>',
+  text: 'Hello World'
+})
+```
+
+### Template-Based Emails
+
+```javascript
+// Send welcome email
+await emailService.sendEmail({
+  to: user.email,
+  template: 'welcome',
+  data: {
+    firstName: user.profile.firstName,
+    verificationToken: user.verificationToken,
+    verificationUrl: `${process.env.CLIENT_URL}/verify/${user.verificationToken}`
+  }
+})
+
+// Send order confirmation
+await emailService.sendEmail({
+  to: user.email,
+  template: 'order-confirmation',
+  data: {
+    user: user,
+    order: order
+  }
+})
+```
+
+### Bulk Email Sending
+
+```javascript
+const emails = [
+  {
+    to: 'customer1@example.com',
+    template: 'newsletter',
+    data: { firstName: 'John' }
+  },
+  {
+    to: 'customer2@example.com',
+    template: 'newsletter',
+    data: { firstName: 'Jane' }
+  }
+]
+
+const results = await emailService.sendBulkEmails(emails)
+console.log(`Sent: ${results.filter(r => r.success).length}`)
+console.log(`Failed: ${results.filter(r => !r.success).length}`)
+```
+
+### Email Queue
+
+```javascript
+// Queue emails for background processing
+emailService.queueEmail({
+  to: 'customer@example.com',
+  template: 'abandoned-cart',
+  data: { cart: userCart }
+})
+
+// Process queue manually (usually handled automatically)
+await emailService.processQueue()
+```
+
+## Available Email Templates
+
+### User Authentication
+- **welcome.hbs** - Welcome email with email verification
+- **password-reset.hbs** - Password reset instructions
+- **admin-welcome.hbs** - Administrator welcome email
+- **staff-welcome.hbs** - Staff member welcome email
+
+### E-commerce
+- **order-confirmation.hbs** - Order confirmation with details
+- **shipping-notification.hbs** - Shipping confirmation with tracking
+- **abandoned-cart.hbs** - Cart abandonment reminder
+
+### Marketing
+- **flash-sale.hbs** - Flash sale announcements
+- **newsletter.hbs** - Newsletter template
+
+## Template Development
+
+### Template Structure
+
+```handlebars
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{subject}}</title>
+    <style>
+        /* Responsive email styles */
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>{{companyName}}</h1>
+        </div>
+        
+        <div class="content">
+            <p>Hi {{firstName}},</p>
+            <!-- Email content -->
+        </div>
+        
+        <div class="footer">
+            <p>© {{currentYear}} {{companyName}}</p>
+        </div>
+    </div>
+</body>
+</html>
+```
+
+### Available Template Variables
+
+All templates have access to these global variables:
+- `baseUrl` - Client application URL
+- `companyName` - Company name from environment
+- `supportEmail` - Support email address
+- `currentYear` - Current year
+
+### Handlebars Helpers
+
+#### Currency Helper
+```handlebars
+{{currency 99.99}}          <!-- $99.99 -->
+{{currency 99.99 'EUR'}}    <!-- €99.99 -->
+```
+
+#### Date Formatting Helper
+```handlebars
+{{formatDate order.createdAt 'short'}}  <!-- Jan 15, 2024 -->
+{{formatDate order.createdAt 'long'}}   <!-- January 15, 2024 -->
+{{formatDate order.createdAt 'full'}}   <!-- January 15, 2024 at 2:30 PM -->
+```
+
+#### Conditional Helper
+```handlebars
+{{#if_eq order.status 'completed'}}
+    <p>Your order is complete!</p>
+{{else}}
+    <p>Your order is being processed.</p>
+{{/if_eq}}
+```
+
+#### Loop with Index Helper
+```handlebars
+{{#each_with_index items}}
+    <p>Item {{index}}: {{name}}</p>
+{{/each_with_index}}
+```
+
+## Email Testing
+
+### Development Testing
+
+```javascript
+// Test email sending
+const testEmail = async () => {
+  try {
+    const result = await emailService.sendEmail({
+      to: 'test@example.com',
+      subject: 'Test Email',
+      template: 'welcome',
+      data: { firstName: 'Test User' }
+    })
+    console.log('Email sent:', result.messageId)
+  } catch (error) {
+    console.error('Email failed:', error.message)
+  }
+}
+```
+
+### Running Email Tests
+
+```bash
+# Run all email service tests
+npm test -- --testPathPattern=emailService
+
+# Run specific test file
+npm test src/tests/services/emailService.test.js
+
+# Run with coverage
+npm test -- --coverage --testPathPattern=emailService
+```
+
+### Template Testing
+
+```bash
+# Test template rendering
+node -e "
+const { emailService } = require('./src/services/emailService');
+const template = emailService.getTemplate('welcome');
+console.log(template({ firstName: 'Test', verificationToken: '123' }));
+"
+```
+
+## Production Deployment
+
+### Email Provider Recommendations
+
+#### For High Volume (>10,000 emails/month)
+- **SendGrid** - Reliable, good deliverability, detailed analytics
+- **AWS SES** - Cost-effective, scalable, integrates with AWS
+
+#### For Low Volume (<10,000 emails/month)
+- **Gmail** - Easy setup, good for development and small apps
+- **Custom SMTP** - Use your hosting provider's SMTP
+
+### Deliverability Best Practices
+
+1. **Domain Authentication**
+   - Set up SPF, DKIM, and DMARC records
+   - Use a dedicated sending domain
+   - Verify domain with your email provider
+
+2. **Content Guidelines**
+   - Avoid spam trigger words
+   - Include unsubscribe links
+   - Use proper HTML structure
+   - Test emails across different clients
+
+3. **List Management**
+   - Implement double opt-in for subscriptions
+   - Honor unsubscribe requests immediately
+   - Regularly clean inactive subscribers
+   - Monitor bounce rates and complaints
+
+### Monitoring and Analytics
+
+```javascript
+// Email sending with tracking
+await emailService.sendEmail({
+  to: 'customer@example.com',
+  template: 'newsletter',
+  data: { firstName: 'John' },
+  trackOpens: true,
+  trackClicks: true,
+  tags: ['newsletter', 'monthly'],
+  metadata: {
+    'campaign-id': 'newsletter-2024-01',
+    'user-segment': 'premium'
+  }
+})
+```
+
+### Error Handling and Logging
+
+The email service includes comprehensive error handling:
+
+```javascript
+// Automatic retry for transient errors
+// Detailed error logging
+// Graceful degradation for email failures
+// Queue management for high-volume sending
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Authentication Errors**
+   - Verify email credentials
+   - Check 2FA and app passwords for Gmail
+   - Ensure API keys are valid for SendGrid/SES
+
+2. **Template Not Found**
+   - Check template file exists in `src/templates/emails/`
+   - Verify template name matches file name
+   - Ensure template is properly compiled
+
+3. **Delivery Issues**
+   - Check spam folders
+   - Verify recipient email addresses
+   - Review email provider logs
+   - Check domain reputation
+
+4. **Rate Limiting**
+   - Adjust `rateLimitDelay` in EmailService
+   - Use email queue for bulk sending
+   - Consider upgrading email provider plan
+
+### Debug Mode
+
+```javascript
+// Enable debug logging
+process.env.NODE_ENV = 'development'
+process.env.DEBUG = 'email:*'
+
+// Test email configuration
+const testConfig = async () => {
+  try {
+    await emailService.transporter.verify()
+    console.log('Email configuration is valid')
+  } catch (error) {
+    console.error('Email configuration error:', error)
+  }
+}
+```
+
+This comprehensive email service provides a robust foundation for all email communications in the shoe store application, ensuring reliable delivery and professional presentation across all customer touchpoints.

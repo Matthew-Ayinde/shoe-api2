@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to the Staff Team!</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f8f9fa;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .staff-badge {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 15px;
+            display: inline-block;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .message {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #555555;
+        }
+        
+        .staff-responsibilities {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 4px solid #28a745;
+        }
+        
+        .staff-responsibilities h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .staff-responsibilities h3::before {
+            content: "👔";
+            margin-right: 10px;
+        }
+        
+        .responsibility-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .responsibility-item {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .responsibility-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .responsibility-title {
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .responsibility-description {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .tools-access {
+            background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+        }
+        
+        .tools-access h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .tool-item {
+            background-color: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .tool-item a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            display: block;
+        }
+        
+        .tool-item:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .guidelines {
+            background-color: #e7f3ff;
+            border: 1px solid #b8daff;
+            border-left: 4px solid #007bff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        .guidelines h3 {
+            color: #004085;
+            margin-bottom: 15px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .guidelines h3::before {
+            content: "📋";
+            margin-right: 10px;
+        }
+        
+        .guidelines ul {
+            color: #004085;
+            padding-left: 20px;
+        }
+        
+        .guidelines li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .support-section {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #f39c12;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        .support-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .support-section h3::before {
+            content: "🤝";
+            margin-right: 10px;
+        }
+        
+        .support-section p {
+            color: #856404;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .footer p {
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+        
+        .footer a {
+            color: #28a745;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0;
+                box-shadow: none;
+            }
+            
+            .header, .content, .footer {
+                padding: 30px 20px;
+            }
+            
+            .responsibility-grid,
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎉 Welcome to the Team!</h1>
+            <p>You're now part of our staff</p>
+            <div class="staff-badge">STAFF MEMBER</div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="content">
+            <div class="greeting">
+                Hi {{firstName}},
+            </div>
+            
+            <div class="message">
+                <p>Welcome to the {{companyName}} team! We're excited to have you join us as a staff member. You now have access to our staff tools and resources to help provide excellent customer service and support.</p>
+                
+                <p>As a staff member, you play a crucial role in ensuring our customers have the best possible experience with our products and services.</p>
+            </div>
+            
+            <!-- Staff Responsibilities -->
+            <div class="staff-responsibilities">
+                <h3>Your Staff Responsibilities</h3>
+                <div class="responsibility-grid">
+                    <div class="responsibility-item">
+                        <div class="responsibility-icon">💬</div>
+                        <div class="responsibility-title">Customer Support</div>
+                        <div class="responsibility-description">Assist customers with inquiries, orders, and product information</div>
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-icon">📦</div>
+                        <div class="responsibility-title">Order Processing</div>
+                        <div class="responsibility-description">Help process orders, track shipments, and handle returns</div>
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-icon">📊</div>
+                        <div class="responsibility-title">Basic Reporting</div>
+                        <div class="responsibility-description">Access basic reports and customer interaction logs</div>
+                    </div>
+                    <div class="responsibility-item">
+                        <div class="responsibility-icon">🔍</div>
+                        <div class="responsibility-title">Product Information</div>
+                        <div class="responsibility-description">Provide accurate product details and recommendations</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tools Access -->
+            <div class="tools-access">
+                <h3>🛠️ Your Staff Tools</h3>
+                <div class="tools-grid">
+                    <div class="tool-item">
+                        <a href="{{baseUrl}}/staff/dashboard">📊 Staff Dashboard</a>
+                    </div>
+                    <div class="tool-item">
+                        <a href="{{baseUrl}}/staff/orders">📦 Order Management</a>
+                    </div>
+                    <div class="tool-item">
+                        <a href="{{baseUrl}}/staff/customers">👥 Customer Support</a>
+                    </div>
+                    <div class="tool-item">
+                        <a href="{{baseUrl}}/staff/products">🔍 Product Catalog</a>
+                    </div>
+                    <div class="tool-item">
+                        <a href="{{baseUrl}}/staff/reports">📈 Basic Reports</a>
+                    </div>
+                    <div class="tool-item">
+                        <a href="{{baseUrl}}/staff/help">❓ Staff Help Center</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Guidelines -->
+            <div class="guidelines">
+                <h3>Staff Guidelines</h3>
+                <ul>
+                    <li>Always maintain a professional and friendly demeanor with customers</li>
+                    <li>Respond to customer inquiries promptly and accurately</li>
+                    <li>Escalate complex issues to supervisors or administrators</li>
+                    <li>Keep customer information confidential and secure</li>
+                    <li>Stay updated on product information and company policies</li>
+                    <li>Document customer interactions and resolutions properly</li>
+                    <li>Follow company procedures for order processing and returns</li>
+                </ul>
+            </div>
+            
+            <!-- Support Section -->
+            <div class="support-section">
+                <h3>Getting Help & Support</h3>
+                <p>• Staff training materials and documentation are available in your dashboard</p>
+                <p>• Regular team meetings and training sessions will be scheduled</p>
+                <p>• Contact your supervisor for guidance on complex customer issues</p>
+                <p>• Use the staff help center for quick reference and FAQs</p>
+                <p>• Report technical issues to the IT support team immediately</p>
+            </div>
+            
+            <!-- Call to Action -->
+            <div class="cta-section">
+                <a href="{{baseUrl}}/staff/dashboard" class="cta-button">
+                    🚀 Access Staff Dashboard
+                </a>
+            </div>
+            
+            <div class="message">
+                <p><strong>Ready to get started?</strong></p>
+                <p>Your staff dashboard contains everything you need to begin helping customers and managing orders. Take some time to familiarize yourself with the tools and resources available to you.</p>
+                
+                <p style="margin-top: 20px;"><strong>Staff Resources:</strong></p>
+                <ul style="margin-top: 10px; padding-left: 20px;">
+                    <li>📚 Staff handbook and procedures guide</li>
+                    <li>🎥 Training videos and tutorials</li>
+                    <li>💬 Staff communication channels</li>
+                    <li>📞 Internal support hotline</li>
+                    <li>📅 Team meeting schedules</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>{{companyName}} Staff Team</strong></p>
+            <p>Supporting our customers with excellence</p>
+            
+            <p style="font-size: 12px; margin-top: 20px;">
+                Staff support: <a href="mailto:staff-support@{{companyName}}.com">staff-support@{{companyName}}.com</a><br>
+                Supervisor contact: <a href="tel:+1-800-STAFF-1">1-800-STAFF-1</a>
+            </p>
+            
+            <p style="font-size: 12px; margin-top: 15px;">
+                This email contains staff information. Please keep it secure.<br>
+                © {{currentYear}} {{companyName}}. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

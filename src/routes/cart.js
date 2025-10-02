@@ -3,6 +3,7 @@ const Cart = require("../models/Cart")
 const Product = require("../models/Product")
 const { authenticate } = require("../middleware/auth")
 const { validateObjectId } = require("../middleware/validation")
+const { emitCartUpdates, trackUserActivity } = require("../middleware/realtime")
 
 const router = express.Router()
 
@@ -78,7 +79,7 @@ router.get("/", authenticate, async (req, res) => {
 // @desc    Add item to cart
 // @route   POST /api/cart/items
 // @access  Private
-router.post("/items", authenticate, async (req, res) => {
+router.post("/items", authenticate, trackUserActivity('cart_add_item'), emitCartUpdates('item_added'), async (req, res) => {
   try {
     const { productId, size, color, quantity = 1 } = req.body
 
@@ -189,7 +190,7 @@ router.post("/items", authenticate, async (req, res) => {
 // @desc    Update cart item quantity
 // @route   PUT /api/cart/items/:itemId
 // @access  Private
-router.put("/items/:itemId", authenticate, async (req, res) => {
+router.put("/items/:itemId", authenticate, trackUserActivity('cart_update_item'), emitCartUpdates('item_updated'), async (req, res) => {
   try {
     const { itemId } = req.params
     const { quantity } = req.body
@@ -265,7 +266,7 @@ router.put("/items/:itemId", authenticate, async (req, res) => {
 // @desc    Remove item from cart
 // @route   DELETE /api/cart/items/:itemId
 // @access  Private
-router.delete("/items/:itemId", authenticate, async (req, res) => {
+router.delete("/items/:itemId", authenticate, trackUserActivity('cart_remove_item'), emitCartUpdates('item_removed'), async (req, res) => {
   try {
     const { itemId } = req.params
 
@@ -315,7 +316,7 @@ router.delete("/items/:itemId", authenticate, async (req, res) => {
 // @desc    Clear entire cart
 // @route   DELETE /api/cart
 // @access  Private
-router.delete("/", authenticate, async (req, res) => {
+router.delete("/", authenticate, trackUserActivity('cart_clear'), emitCartUpdates('cart_cleared'), async (req, res) => {
   try {
     const cart = await Cart.findOne({ user: req.user._id })
 
