@@ -390,6 +390,9 @@ class EmailService {
 // Create singleton instance
 const emailService = new EmailService()
 
+// Legacy helper function for backward compatibility
+const createTransporter = () => emailService.transporter
+
 // Legacy template functions for backward compatibility
 // Email templates
 const getWelcomeEmailTemplate = (firstName, verificationToken) => {
@@ -869,63 +872,63 @@ const sendOrderConfirmationEmail = async (order, user) => {
   }
 }
 
-// Send bulk email
-const sendBulkEmail = async (emailData) => {
-  try {
-    const transporter = createTransporter()
-    const { subject, htmlContent, textContent, templateType, recipients } = emailData
+// // Send bulk email
+// const sendBulkEmail = async (emailData) => {
+//   try {
+//     const transporter = createTransporter()
+//     const { subject, htmlContent, textContent, templateType, recipients } = emailData
 
-    const promises = recipients.map(async (recipient) => {
-      try {
-        let finalHtmlContent = htmlContent
-        let finalTextContent = textContent
+//     const promises = recipients.map(async (recipient) => {
+//       try {
+//         let finalHtmlContent = htmlContent
+//         let finalTextContent = textContent
 
-        // Replace placeholders with recipient data
-        if (finalHtmlContent) {
-          finalHtmlContent = finalHtmlContent
-            .replace(/{{firstName}}/g, recipient.firstName || "")
-            .replace(/{{lastName}}/g, recipient.lastName || "")
-            .replace(/{{email}}/g, recipient.email || "")
-        }
+//         // Replace placeholders with recipient data
+//         if (finalHtmlContent) {
+//           finalHtmlContent = finalHtmlContent
+//             .replace(/{{firstName}}/g, recipient.firstName || "")
+//             .replace(/{{lastName}}/g, recipient.lastName || "")
+//             .replace(/{{email}}/g, recipient.email || "")
+//         }
 
-        if (finalTextContent) {
-          finalTextContent = finalTextContent
-            .replace(/{{firstName}}/g, recipient.firstName || "")
-            .replace(/{{lastName}}/g, recipient.lastName || "")
-            .replace(/{{email}}/g, recipient.email || "")
-        }
+//         if (finalTextContent) {
+//           finalTextContent = finalTextContent
+//             .replace(/{{firstName}}/g, recipient.firstName || "")
+//             .replace(/{{lastName}}/g, recipient.lastName || "")
+//             .replace(/{{email}}/g, recipient.email || "")
+//         }
 
-        await transporter.sendMail({
-          from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-          to: recipient.email,
-          subject,
-          html: finalHtmlContent,
-          text: finalTextContent,
-        })
+//         await transporter.sendMail({
+//           from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+//           to: recipient.email,
+//           subject,
+//           html: finalHtmlContent,
+//           text: finalTextContent,
+//         })
 
-        console.log(`Bulk email sent to ${recipient.email}`)
-        return { email: recipient.email, success: true }
-      } catch (error) {
-        console.error(`Failed to send bulk email to ${recipient.email}:`, error)
-        return { email: recipient.email, success: false, error: error.message }
-      }
-    })
+//         console.log(`Bulk email sent to ${recipient.email}`)
+//         return { email: recipient.email, success: true }
+//       } catch (error) {
+//         console.error(`Failed to send bulk email to ${recipient.email}:`, error)
+//         return { email: recipient.email, success: false, error: error.message }
+//       }
+//     })
 
-    const results = await Promise.allSettled(promises)
-    const successful = results.filter((result) => result.status === "fulfilled" && result.value.success).length
-    const failed = results.length - successful
+//     const results = await Promise.allSettled(promises)
+//     const successful = results.filter((result) => result.status === "fulfilled" && result.value.success).length
+//     const failed = results.length - successful
 
-    return {
-      success: true,
-      totalSent: successful,
-      totalFailed: failed,
-      results: results.map((result) => (result.status === "fulfilled" ? result.value : result.reason)),
-    }
-  } catch (error) {
-    console.error("Send bulk email error:", error)
-    throw error
-  }
-}
+//     return {
+//       success: true,
+//       totalSent: successful,
+//       totalFailed: failed,
+//       results: results.map((result) => (result.status === "fulfilled" ? result.value : result.reason)),
+//     }
+//   } catch (error) {
+//     console.error("Send bulk email error:", error)
+//     throw error
+//   }
+// }
 
 // Send flash sale email notification
 const sendFlashSaleEmail = async (recipients, flashSaleData) => {
@@ -1020,87 +1023,87 @@ const sendBulkEmail = async (emailData) => {
 }
 
 // Legacy wrapper functions for backward compatibility
-const sendWelcomeEmail = async (email, firstName, verificationToken) => {
-  return await emailService.sendEmail({
-    to: email,
-    template: 'welcome',
-    data: {
-      firstName,
-      verificationToken,
-      verificationUrl: `${process.env.CLIENT_URL || "http://localhost:3000"}/verify-email/${verificationToken}`
-    }
-  })
-}
+// const sendWelcomeEmail = async (email, firstName, verificationToken) => {
+//   return await emailService.sendEmail({
+//     to: email,
+//     template: 'welcome',
+//     data: {
+//       firstName,
+//       verificationToken,
+//       verificationUrl: `${process.env.CLIENT_URL || "http://localhost:3000"}/verify-email/${verificationToken}`
+//     }
+//   })
+// }
 
-const sendAdminWelcomeEmail = async (email, firstName) => {
-  return await emailService.sendEmail({
-    to: email,
-    template: 'admin-welcome',
-    data: { firstName }
-  })
-}
+// const sendAdminWelcomeEmail = async (email, firstName) => {
+//   return await emailService.sendEmail({
+//     to: email,
+//     template: 'admin-welcome',
+//     data: { firstName }
+//   })
+// }
 
-const sendStaffWelcomeEmail = async (email, firstName) => {
-  return await emailService.sendEmail({
-    to: email,
-    template: 'staff-welcome',
-    data: { firstName }
-  })
-}
+// const sendStaffWelcomeEmail = async (email, firstName) => {
+//   return await emailService.sendEmail({
+//     to: email,
+//     template: 'staff-welcome',
+//     data: { firstName }
+//   })
+// }
 
-const sendPasswordResetEmail = async (email, firstName, resetToken) => {
-  return await emailService.sendEmail({
-    to: email,
-    template: 'password-reset',
-    data: {
-      firstName,
-      resetToken,
-      resetUrl: `${process.env.CLIENT_URL || "http://localhost:3000"}/reset-password/${resetToken}`
-    }
-  })
-}
+// const sendPasswordResetEmail = async (email, firstName, resetToken) => {
+//   return await emailService.sendEmail({
+//     to: email,
+//     template: 'password-reset',
+//     data: {
+//       firstName,
+//       resetToken,
+//       resetUrl: `${process.env.CLIENT_URL || "http://localhost:3000"}/reset-password/${resetToken}`
+//     }
+//   })
+// }
 
-const sendOrderConfirmationEmail = async (order, user) => {
-  return await emailService.sendEmail({
-    to: user.email,
-    template: 'order-confirmation',
-    data: { order, user }
-  })
-}
+// const sendOrderConfirmationEmail = async (order, user) => {
+//   return await emailService.sendEmail({
+//     to: user.email,
+//     template: 'order-confirmation',
+//     data: { order, user }
+//   })
+// }
 
-const sendFlashSaleEmail = async (recipients, flashSaleData) => {
-  const emails = recipients.map(recipient => ({
-    to: recipient.email,
-    template: 'flash-sale',
-    data: {
-      firstName: recipient.firstName,
-      flashSale: flashSaleData
-    }
-  }))
+// const sendFlashSaleEmail = async (recipients, flashSaleData) => {
+//   const emails = recipients.map(recipient => ({
+//     to: recipient.email,
+//     template: 'flash-sale',
+//     data: {
+//       firstName: recipient.firstName,
+//       flashSale: flashSaleData
+//     }
+//   }))
 
-  return await emailService.sendBulkEmails(emails)
-}
+//   return await emailService.sendBulkEmails(emails)
+// }
 
-const sendNewsletterEmail = async (recipients, newsletterData) => {
-  const emails = recipients.map(recipient => ({
-    to: recipient.email,
-    template: 'newsletter',
-    data: {
-      firstName: recipient.firstName,
-      newsletter: newsletterData
-    }
-  }))
+// const sendNewsletterEmail = async (recipients, newsletterData) => {
+//   const emails = recipients.map(recipient => ({
+//     to: recipient.email,
+//     template: 'newsletter',
+//     data: {
+//       firstName: recipient.firstName,
+//       newsletter: newsletterData
+//     }
+//   }))
 
-  return await emailService.sendBulkEmails(emails)
-}
+//   return await emailService.sendBulkEmails(emails)
+// }
 
-const sendShippingNotificationEmail = async (order, user) => {
-  return await emailService.sendEmail({
-    to: user.email,
-    template: 'shipping-notification',
-    data: { order, user }
-  })
-}
+// const sendShippingNotificationEmail = async (order, user) => {
+//   return await emailService.sendEmail({
+//     to: user.email,
+//     template: 'shipping-notification',
+//     data: { order, user }
+//   })
+// }
 
 module.exports = {
   // New enhanced service

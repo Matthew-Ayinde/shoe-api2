@@ -43,8 +43,6 @@ process.env.VAPID_PUBLIC_KEY = "test-vapid-public-key"
 process.env.VAPID_PRIVATE_KEY = "test-vapid-private-key"
 process.env.VAPID_EMAIL = "mailto:test@example.com"
 
-const jest = require("jest")
-
 // Suppress console logs during testing for cleaner output
 // This helps focus on test results rather than application logs
 if (process.env.NODE_ENV === "test") {
@@ -228,6 +226,12 @@ jest.mock("../services/paymentService", () => ({
   }),
   verifyStripeWebhook: jest.fn().mockReturnValue({ type: "payment_intent.succeeded" }),
   createStripeRefund: jest.fn().mockResolvedValue({ success: true, refund: { id: "re_test_123" } }),
+}))
+
+// Mock web-push
+jest.mock("web-push", () => ({
+  setVapidDetails: jest.fn(),
+  sendNotification: jest.fn().mockResolvedValue({}),
 }))
 
 console.log("🧪 Test environment configured successfully")

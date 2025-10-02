@@ -565,12 +565,12 @@ const emitFlashSaleUpdate = (saleData, event) => {
 const emitNewOrderNotification = (orderData) => {
   if (io) {
     const notificationData = {
-      orderId: orderData._id,
+      orderId: orderData.orderId,
       orderNumber: orderData.orderNumber,
-      customer: orderData.user,
-      totalAmount: orderData.pricing.total,
-      itemCount: orderData.items.length,
-      status: orderData.status,
+      customer: orderData.customerName,
+      totalAmount: orderData.totalAmount,
+      itemCount: orderData.itemCount,
+      status: 'pending',
       timestamp: new Date()
     }
 

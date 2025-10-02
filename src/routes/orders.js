@@ -100,8 +100,14 @@ router.post("/", authenticate, validateOrder, async (req, res) => {
     }
 
     try {
+      // Generate order number explicitly to ensure it's set
+      const timestamp = Date.now().toString()
+      const random = Math.floor(Math.random() * 1000).toString().padStart(3, "0")
+      const orderNumber = `ORD-${timestamp}-${random}`
+
       // Create order
       const order = new Order({
+        orderNumber,
         user: req.user._id,
         items: processedItems,
         subtotal,
@@ -154,7 +160,15 @@ router.post("/", authenticate, validateOrder, async (req, res) => {
       })
     } catch (orderError) {
       // Release reserved stock if order creation fails
-      await releaseStock(stockReservation.reservations)
+      const stockItems = stockReservation.reservations.map((r) => ({
+        product: r.product,
+        variant: {
+          size: r.size,
+          color: r.color,
+        },
+        quantity: r.quantity,
+      }))
+      await releaseStock(stockItems)
       throw orderError
     }
   } catch (error) {
@@ -538,5 +552,6 @@ router.get("/admin/stats", authenticate, isStaffOrAdmin, async (req, res) => {
     })
   }
 })
+
 
 module.exports = router

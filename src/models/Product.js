@@ -161,7 +161,7 @@ const productSchema = new mongoose.Schema(
     // Brief description for product cards and previews
     shortDescription: {
       type: String,
-      maxlength: [200, 'Short description cannot exceed 200 characters']
+      // maxlength: [200, 'Short description cannot exceed 200 characters']
     },
 
     // Product Categorization
