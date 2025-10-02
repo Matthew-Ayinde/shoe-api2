@@ -1,44 +1,35 @@
-const app = require("./app")
-const http = require("http")
-const socketIo = require("socket.io")
-const socketService = require("./services/socketService")
-const cronService = require("./services/cronService")
+/**
+ * Server Entry Point
+ *
+ * This file serves as an alternative entry point to the application.
+ * It imports the configured app from app.js and starts the server.
+ *
+ * This separation allows for:
+ * - Better testing (can import app without starting server)
+ * - Flexibility in deployment configurations
+ * - Cleaner code organization
+ */
 
-const PORT = process.env.PORT || 5000
+require("dotenv").config()
 
-// Create HTTP server
-const server = http.createServer(app)
+// Import the configured application
+const { app, server } = require("./app")
 
-// Initialize Socket.IO
-const io = socketIo(server, {
-  cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
-    methods: ["GET", "POST"],
-  },
-})
+// The server startup logic is handled in app.js
+// This file exists for compatibility and alternative entry points
 
-// Initialize socket service
-socketService.init(io)
+console.log("🔄 Starting server via server.js entry point...")
 
-// Start cron jobs
-cronService.startJobs()
+// If app.js didn't start the server (when imported), start it here
+if (!server.listening) {
+  const PORT = process.env.PORT || 5000
 
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-  console.log(`Environment: ${process.env.NODE_ENV}`)
-})
-
-// Graceful shutdown
-process.on("SIGTERM", () => {
-  console.log("SIGTERM received, shutting down gracefully")
-  server.close(() => {
-    console.log("Process terminated")
+  server.listen(PORT, () => {
+    console.log("🚀 ============================================")
+    console.log(`🌟 Server running in ${process.env.NODE_ENV || 'development'} mode`)
+    console.log(`🔗 Server URL: http://localhost:${PORT}`)
+    console.log(`📚 API Documentation: http://localhost:${PORT}/api/health`)
+    console.log(`🔌 Socket.IO enabled for real-time features`)
+    console.log("🚀 ============================================")
   })
-})
-
-process.on("SIGINT", () => {
-  console.log("SIGINT received, shutting down gracefully")
-  server.close(() => {
-    console.log("Process terminated")
-  })
-})
+}
