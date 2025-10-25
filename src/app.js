@@ -172,7 +172,7 @@ require("./config/passport")
 const connectDatabase = async () => {
   try {
     const conn = await mongoose.connect(
-      process.env.MONGODB_URI || "mongodb://localhost:27017/shoe-ecommerce",
+      process.env.MONGODB_URI,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -182,18 +182,27 @@ const connectDatabase = async () => {
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`)
     console.log(`📊 Database: ${conn.connection.name}`)
 
-    // Start cron jobs after successful database connection
-    startCronJobs()
+    // Start cron jobs after successful database connection (not in test mode)
+    if (process.env.NODE_ENV !== "test") {
+      startCronJobs()
+    }
 
     return conn
   } catch (error) {
     console.error("❌ MongoDB connection error:", error)
-    process.exit(1)
+    // Don't exit in test environment
+    // if (process.env.NODE_ENV !== "test") {
+    //   process.exit(1)
+    // }
+    throw error
   }
 }
 
-// Initialize database connection
-connectDatabase()
+// Initialize database connection only if not in test mode
+// Tests will handle their own database connections
+// if (process.env.NODE_ENV !== "test") {
+  connectDatabase()
+// }
 
 // ============================================================================
 // ROUTES SETUP

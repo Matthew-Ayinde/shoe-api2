@@ -1,18 +1,14 @@
 const request = require("supertest")
 const mongoose = require("mongoose")
-const app = require("../app")
+const { app } = require("../app")
 const User = require("../models/User")
 
 // Test database
-const MONGODB_URI = process.env.MONGODB_TEST_URI || "mongodb://localhost:27017/shoe-store-test"
+const MONGODB_URI = process.env.MONGODB_URI
 
 describe("Authentication Endpoints", () => {
   beforeAll(async () => {
     await mongoose.connect(MONGODB_URI)
-  })
-
-  beforeEach(async () => {
-    await User.deleteMany({})
   })
 
   afterAll(async () => {
@@ -30,7 +26,7 @@ describe("Authentication Endpoints", () => {
 
       const response = await request(app).post("/api/auth/register").send(userData).expect(201)
 
-      expect(response.body.success).toBe(true)
+      expect(response.body.status).toBe("success")
       expect(response.body.data.user.email).toBe(userData.email)
       expect(response.body.data.user.password).toBeUndefined()
     })
@@ -45,7 +41,7 @@ describe("Authentication Endpoints", () => {
 
       const response = await request(app).post("/api/auth/register").send(userData).expect(400)
 
-      expect(response.body.success).toBe(false)
+      expect(response.body.status).toBe("error")
     })
 
     it("should not register user with existing email", async () => {
@@ -62,7 +58,7 @@ describe("Authentication Endpoints", () => {
       // Try to create again
       const response = await request(app).post("/api/auth/register").send(userData).expect(400)
 
-      expect(response.body.success).toBe(false)
+      expect(response.body.status).toBe("error")
       expect(response.body.message).toContain("already exists")
     })
   })
@@ -82,14 +78,17 @@ describe("Authentication Endpoints", () => {
       const response = await request(app)
         .post("/api/auth/login")
         .send({
-          email: "test@example.com",
-          password: "password123",
+          email: "ayindematthew2003@gmail.com",
+          password: "Matthew03",
         })
-        .expect(200)
 
-      expect(response.body.success).toBe(true)
+      console.log("Login response status:", response.status)
+      console.log("Login response body:", JSON.stringify(response.body, null, 2))
+
+      expect(response.status).toBe(200)
+      expect(response.body.status).toBe("success")
       expect(response.body.data.token).toBeDefined()
-      expect(response.body.data.user.email).toBe("test@example.com")
+      expect(response.body.data.user.email).toBe("ayindematthew2003@gmail.com")
     })
 
     it("should not login with invalid credentials", async () => {
@@ -101,7 +100,7 @@ describe("Authentication Endpoints", () => {
         })
         .expect(401)
 
-      expect(response.body.success).toBe(false)
+      expect(response.body.status).toBe("error")
     })
 
     it("should not login with non-existent user", async () => {
@@ -113,7 +112,7 @@ describe("Authentication Endpoints", () => {
         })
         .expect(401)
 
-      expect(response.body.success).toBe(false)
+      expect(response.body.status).toBe("error")
     })
   })
 })

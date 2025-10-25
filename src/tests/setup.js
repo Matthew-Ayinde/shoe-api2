@@ -16,11 +16,15 @@
  * - Mock external services
  */
 
+// Load environment variables first
+require('dotenv').config()
+
 // Set test environment variables
 process.env.NODE_ENV = "test"
-process.env.JWT_SECRET = "test-jwt-secret-for-testing-only"
-process.env.JWT_EXPIRE = "1h"
-process.env.MONGODB_URI = "mongodb://localhost:27017/shoe-store-test"
+process.env.JWT_SECRET = process.env.JWT_SECRET || "test-jwt-secret-for-testing-only"
+process.env.JWT_EXPIRE = process.env.JWT_EXPIRE || "1h"
+// Use the MongoDB Test URI from .env file
+process.env.MONGODB_URI = process.env.MONGODB_TEST_URI || process.env.MONGODB_URI
 
 // Email service test configuration
 process.env.EMAIL_USER = "test@example.com"
@@ -45,12 +49,13 @@ process.env.VAPID_EMAIL = "mailto:test@example.com"
 
 // Suppress console logs during testing for cleaner output
 // This helps focus on test results rather than application logs
-if (process.env.NODE_ENV === "test") {
-  console.log = jest.fn()
-  console.error = jest.fn()
-  console.warn = jest.fn()
-  console.info = jest.fn()
-}
+// Temporarily disabled for debugging
+// if (process.env.NODE_ENV === "test") {
+//   console.log = jest.fn()
+//   console.error = jest.fn()
+//   console.warn = jest.fn()
+//   console.info = jest.fn()
+// }
 
 /**
  * Global Test Utilities
