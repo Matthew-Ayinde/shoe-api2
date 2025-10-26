@@ -77,7 +77,7 @@ router.get("/dashboard", async (req, res) => {
 
     // Recent orders
     const recentOrders = await Order.find()
-      .populate("userId", "firstName lastName email")
+      .populate("user", "firstName lastName email")
       .sort({ createdAt: -1 })
       .limit(10)
 
@@ -268,11 +268,11 @@ router.get("/orders", async (req, res) => {
         email: { $regex: search, $options: "i" },
       }).select("_id")
 
-      query.$or = [{ _id: { $regex: search, $options: "i" } }, { userId: { $in: users.map((u) => u._id) } }]
+      query.$or = [{ _id: { $regex: search, $options: "i" } }, { user: { $in: users.map((u) => u._id) } }]
     }
 
     const orders = await Order.find(query)
-      .populate("userId", "firstName lastName email")
+      .populate("user", "firstName lastName email")
       .sort({ createdAt: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit)
@@ -326,7 +326,7 @@ router.patch(
       }
 
       const order = await Order.findByIdAndUpdate(req.params.id, updateData, { new: true }).populate(
-        "userId",
+        "user",
         "firstName lastName email",
       )
 
@@ -338,7 +338,7 @@ router.patch(
       }
 
       // Send real-time update
-      socketService.emitToUser(order.userId._id, "orderStatusUpdate", {
+      socketService.emitToUser(order.user._id, "orderStatusUpdate", {
         orderId: order._id,
         status: order.status,
         trackingNumber: order.shipping?.trackingNumber,

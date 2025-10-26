@@ -34,7 +34,7 @@ router.get("/dashboard", async (req, res) => {
     const recentOrders = await Order.find({
       status: { $in: ["pending", "confirmed", "processing"] },
     })
-      .populate("userId", "firstName lastName email")
+      .populate("user", "firstName lastName email")
       .sort({ createdAt: -1 })
       .limit(20)
 
@@ -87,7 +87,7 @@ router.get("/orders", async (req, res) => {
     }
 
     const orders = await Order.find(query)
-      .populate("userId", "firstName lastName email phone")
+      .populate("user", "firstName lastName email phone")
       .sort({ createdAt: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit)
@@ -117,7 +117,7 @@ router.get("/orders", async (req, res) => {
 router.get("/orders/:id", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
-      .populate("userId", "firstName lastName email phone addresses")
+      .populate("user", "firstName lastName email phone addresses")
       .populate("items.productId", "name brand images")
 
     if (!order) {
@@ -174,7 +174,7 @@ router.patch(
       }
 
       const order = await Order.findByIdAndUpdate(req.params.id, updateData, { new: true }).populate(
-        "userId",
+        "user",
         "firstName lastName email",
       )
 
@@ -186,7 +186,7 @@ router.patch(
       }
 
       // Send real-time update
-      socketService.emitToUser(order.userId._id, "orderStatusUpdate", {
+      socketService.emitToUser(order.user._id, "orderStatusUpdate", {
         orderId: order._id,
         status: order.status,
         trackingNumber: order.shipping?.trackingNumber,
@@ -253,7 +253,7 @@ router.get("/customers", async (req, res) => {
 
 router.get("/customers/:id/orders", async (req, res) => {
   try {
-    const orders = await Order.find({ userId: req.params.id }).sort({ createdAt: -1 }).limit(50)
+    const orders = await Order.find({ user: req.params.id }).sort({ createdAt: -1 }).limit(50)
 
     res.json({
       success: true,

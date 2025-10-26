@@ -463,7 +463,7 @@ router.get("/featured", async (req, res) => {
     console.error("Get featured products error:", error)
     res.status(500).json({
       status: "error",
-      message: "Failed to fetch featured products",
+      message: "Failed to fetch all featured products",
     })
   }
 })
