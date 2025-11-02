@@ -1,0 +1,62 @@
+services:
+  - type: web
+    name: shoe-store-api
+    env: node
+    region: oregon # or choose: ohio, virginia, oregon, frankfurt, singapore
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+        sync: false
+      - key: JWT_EXPIRE
+        value: 7d
+      - key: ADMIN_CREATION_SECRET
+        generateValue: true
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: ADMIN_DASHBOARD_URL
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: EMAIL_FROM
+        value: noreply@shoestore.com
+      - key: EMAIL_FROM_NAME
+        value: Shoe Store
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: RATE_LIMIT_GENERAL
+        value: 100
+      - key: RATE_LIMIT_AUTH
+        value: 5
+      - key: ENABLE_API_DOCS
+        value: true
+      - key: LOG_LEVEL
+        value: info
