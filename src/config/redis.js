@@ -87,14 +87,11 @@ const initializeRedis = async () => {
     return redisClient
   } catch (error) {
     console.error('❌ Redis initialization failed:', error)
+    console.warn('⚠️  Continuing without Redis - caching will be disabled')
     
-    // In development, continue without Redis
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('⚠️  Continuing without Redis in development mode')
-      return null
-    }
-    
-    throw error
+    // Continue without Redis in all environments
+    // This allows the app to work even if Redis is not available
+    return null
   }
 }
 

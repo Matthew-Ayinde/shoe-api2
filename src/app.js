@@ -171,11 +171,20 @@ require("./config/passport")
  */
 const connectDatabase = async () => {
   try {
+    // Validate MongoDB URI exists
+    if (!process.env.MONGODB_URI) {
+      throw new Error('MONGODB_URI environment variable is not defined')
+    }
+
+    console.log('🔄 Attempting to connect to MongoDB...')
+    
     const conn = await mongoose.connect(
       process.env.MONGODB_URI,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        serverSelectionTimeoutMS: 10000, // Timeout after 10 seconds
+        socketTimeoutMS: 45000,
       }
     )
 
@@ -184,25 +193,31 @@ const connectDatabase = async () => {
 
     // Start cron jobs after successful database connection (not in test mode)
     if (process.env.NODE_ENV !== "test") {
+      console.log('⏰ Starting cron jobs...')
       startCronJobs()
     }
 
     return conn
   } catch (error) {
-    console.error("❌ MongoDB connection error:", error)
-    // Don't exit in test environment
-    // if (process.env.NODE_ENV !== "test") {
-    //   process.exit(1)
-    // }
-    throw error
+    console.error("❌ MongoDB connection error:", error.message)
+    
+    // In production, we want to retry instead of crashing immediately
+    if (process.env.NODE_ENV === 'production') {
+      console.log('⚠️  Will retry MongoDB connection in 5 seconds...')
+      setTimeout(connectDatabase, 5000)
+    } else {
+      throw error
+    }
   }
 }
 
 // Initialize database connection only if not in test mode
 // Tests will handle their own database connections
-// if (process.env.NODE_ENV !== "test") {
-  connectDatabase()
-// }
+if (process.env.NODE_ENV !== "test") {
+  connectDatabase().catch(err => {
+    console.error('Failed to initialize database:', err.message)
+  })
+}
 
 // ============================================================================
 // ROUTES SETUP
@@ -282,6 +297,16 @@ app.use(errorHandler)
  */
 if (require.main === module) {
   const PORT = process.env.PORT || 5000
+
+  // Log environment variables for debugging (hide sensitive data)
+  console.log('🔧 Environment Check:')
+  console.log(`   NODE_ENV: ${process.env.NODE_ENV}`)
+  console.log(`   PORT: ${PORT}`)
+  console.log(`   MONGODB_URI: ${process.env.MONGODB_URI ? '✅ Set' : '❌ Not Set'}`)
+  console.log(`   JWT_SECRET: ${process.env.JWT_SECRET ? '✅ Set' : '❌ Not Set'}`)
+  console.log(`   CLOUDINARY_CLOUD_NAME: ${process.env.CLOUDINARY_CLOUD_NAME ? '✅ Set' : '❌ Not Set'}`)
+  console.log(`   STRIPE_SECRET_KEY: ${process.env.STRIPE_SECRET_KEY ? '✅ Set' : '❌ Not Set'}`)
+  console.log('')
 
   server.listen(PORT, () => {
     console.log("🚀 ============================================")
