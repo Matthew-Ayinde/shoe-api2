@@ -1,11 +1,12 @@
 services:
   - type: web
     name: shoe-store-api
+    runtime: node
     env: node
-    region: oregon # or choose: ohio, virginia, oregon, frankfurt, singapore
+    region: oregon
     plan: free
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: npm ci --omit=dev
+    startCommand: node src/app.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
