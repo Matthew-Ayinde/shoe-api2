@@ -27,7 +27,11 @@ const startCronJobs = () => {
 }
 
 const stopCronJobs = () => {
-  cronJobs.forEach((job) => job.destroy())
+  cronJobs.forEach((job) => {
+    if (job && typeof job.stop === 'function') {
+      job.stop()
+    }
+  })
   cronJobs = []
   console.log("Cron jobs stopped")
 }

@@ -40,6 +40,7 @@ const NOTIFICATION_TYPES = {
   BACK_IN_STOCK: "back_in_stock",
   REVIEW_REQUEST: "review_request",
   WISHLIST_SALE: "wishlist_sale",
+  LOGIN_NOTIFICATION: "login_notification",
 }
 
 /**
@@ -101,6 +102,12 @@ const getNotificationTemplate = (type, data) => {
       message: `${data.productName} - ${data.variant.color} (Size ${data.variant.size}) is running low!`,
       channels: ["push", "in_app"],
       priority: "urgent",
+    },
+    [NOTIFICATION_TYPES.LOGIN_NOTIFICATION]: {
+      title: `🔐 New Login Detected`,
+      message: `A new login to your account was detected from ${data.location || 'Unknown location'}.`,
+      channels: ["email", "push", "in_app"],
+      priority: "high",
     },
   }
 

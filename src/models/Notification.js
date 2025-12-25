@@ -20,6 +20,7 @@ const notificationSchema = new mongoose.Schema(
         "newsletter",
         "promotion",
         "system",
+        "login_notification",
       ],
       required: true,
     },

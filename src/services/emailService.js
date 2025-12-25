@@ -832,6 +832,84 @@ const sendStaffWelcomeEmail = async (email, firstName) => {
   }
 }
 
+// Send login notification email
+const sendLoginNotificationEmail = async (email, firstName, loginData) => {
+  try {
+    const transporter = createTransporter()
+    
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:3000"
+    const loginTime = new Date().toLocaleString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZoneName: 'short'
+    })
+
+    const templateData = {
+      firstName: firstName || 'User',
+      loginTime: loginTime,
+      ipAddress: loginData.ipAddress || 'Unknown',
+      location: loginData.location || 'Unknown',
+      device: loginData.device || 'Unknown Device',
+      browser: loginData.browser || 'Unknown Browser',
+      dashboardUrl: `${clientUrl}/dashboard`,
+      changePasswordUrl: `${clientUrl}/account/change-password`,
+      year: new Date().getFullYear()
+    }
+
+    // Try to use Handlebars template first
+    if (emailService && emailService.templates.has('login-notification')) {
+      const compiledTemplate = emailService.templates.get('login-notification')
+      const html = compiledTemplate(templateData)
+
+      await transporter.sendMail({
+        from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+        to: email,
+        subject: '🔐 New Login Detected - Shoe Store',
+        html: html,
+      })
+    } else {
+      // Fallback to simple HTML template
+      const html = `
+        <!DOCTYPE html>
+        <html>
+          <head><style>body { font-family: Arial, sans-serif; }</style></head>
+          <body>
+            <h2>🔐 New Login Detected</h2>
+            <p>Hi ${templateData.firstName},</p>
+            <p>A new login to your account was detected.</p>
+            <div style="background: #f5f5f5; padding: 15px; margin: 20px 0;">
+              <h3>Login Details:</h3>
+              <p><strong>Time:</strong> ${templateData.loginTime}</p>
+              <p><strong>IP Address:</strong> ${templateData.ipAddress}</p>
+              <p><strong>Location:</strong> ${templateData.location}</p>
+              <p><strong>Device:</strong> ${templateData.device}</p>
+              <p><strong>Browser:</strong> ${templateData.browser}</p>
+            </div>
+            <p>If this wasn't you, please <a href="${templateData.changePasswordUrl}">change your password</a> immediately.</p>
+            <p>Best regards,<br>Shoe Store Team</p>
+          </body>
+        </html>
+      `
+
+      await transporter.sendMail({
+        from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+        to: email,
+        subject: '🔐 New Login Detected - Shoe Store',
+        html: html,
+      })
+    }
+
+    console.log(`Login notification email sent to ${email}`)
+  } catch (error) {
+    console.error("Failed to send login notification email:", error)
+    throw error
+  }
+}
+
 // Send password reset email
 const sendPasswordResetEmail = async (email, firstName, resetToken) => {
   try {
@@ -1115,6 +1193,7 @@ module.exports = {
   sendWelcomeEmail,
   sendAdminWelcomeEmail,
   sendStaffWelcomeEmail,
+  sendLoginNotificationEmail,
   sendPasswordResetEmail,
   sendOrderConfirmationEmail,
   sendBulkEmail,

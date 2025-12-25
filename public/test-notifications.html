@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Notification Test</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: #48bb78;
+      margin-top: 10px;
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .status.success {
+      background: #c6f6d5;
+      color: #22543d;
+      border: 1px solid #48bb78;
+    }
+
+    .status.error {
+      background: #fed7d7;
+      color: #742a2a;
+      border: 1px solid #f56565;
+    }
+
+    .status.info {
+      background: #bee3f8;
+      color: #2c5282;
+      border: 1px solid #4299e1;
+    }
+
+    .notification-panel {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f7fafc;
+      border-radius: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .notification-panel h3 {
+      margin-bottom: 15px;
+      color: #333;
+      font-size: 18px;
+    }
+
+    .notification-item {
+      padding: 12px;
+      background: white;
+      border-left: 4px solid #667eea;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .notification-item.new {
+      border-left-color: #f56565;
+    }
+
+    .notification-time {
+      font-size: 12px;
+      color: #718096;
+    }
+
+    .notification-message {
+      margin-top: 5px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .notification-details {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #4a5568;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .connection-status {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .connection-status.connected {
+      background: #48bb78;
+    }
+
+    .connection-status.disconnected {
+      background: #f56565;
+    }
+
+    .features {
+      margin-top: 20px;
+      padding: 15px;
+      background: #edf2f7;
+      border-radius: 8px;
+    }
+
+    .features h4 {
+      margin-bottom: 10px;
+      color: #2d3748;
+    }
+
+    .features ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .features li {
+      padding: 5px 0;
+      color: #4a5568;
+      font-size: 14px;
+    }
+
+    .features li::before {
+      content: "✓ ";
+      color: #48bb78;
+      font-weight: bold;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Login Notification Test</h1>
+    <p class="subtitle">Test the login notification system</p>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="test@example.com" value="test@example.com">
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter password" value="password123">
+    </div>
+
+    <button class="btn" id="loginBtn">Login & Test Notifications</button>
+    <button class="btn btn-secondary" id="enablePushBtn" style="display: none;">Enable Push Notifications</button>
+
+    <div id="status"></div>
+
+    <div class="features">
+      <h4>What happens when you login:</h4>
+      <ul>
+        <li>Email notification sent with login details</li>
+        <li>Web push notification (if enabled)</li>
+        <li>Real-time Socket.IO notification</li>
+        <li>Login info captured (IP, location, device)</li>
+      </ul>
+    </div>
+
+    <div class="notification-panel">
+      <h3>
+        <span class="connection-status disconnected" id="socketStatus"></span>
+        Recent Notifications
+      </h3>
+      <div id="notifications">
+        <p style="color: #718096; font-size: 14px;">No notifications yet. Login to see them!</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script>
+    const API_URL = 'http://localhost:5000'
+    let socket = null
+    let authToken = null
+
+    // DOM elements
+    const loginBtn = document.getElementById('loginBtn')
+    const enablePushBtn = document.getElementById('enablePushBtn')
+    const statusDiv = document.getElementById('status')
+    const notificationsDiv = document.getElementById('notifications')
+    const socketStatus = document.getElementById('socketStatus')
+
+    // Show status message
+    function showStatus(message, type = 'info') {
+      statusDiv.innerHTML = message
+      statusDiv.className = `status ${type}`
+      statusDiv.style.display = 'block'
+    }
+
+    // Add notification to panel
+    function addNotification(notification) {
+      const notifItem = document.createElement('div')
+      notifItem.className = 'notification-item new'
+      notifItem.innerHTML = `
+        <div class="notification-time">${new Date().toLocaleString()}</div>
+        <div class="notification-message">${notification.title}</div>
+        <div class="notification-details">${notification.message}</div>
+        ${notification.loginInfo ? `
+          <div class="notification-details" style="margin-top: 5px;">
+            📍 ${notification.loginInfo.location} • 
+            💻 ${notification.loginInfo.device} • 
+            🌐 ${notification.loginInfo.browser}
+          </div>
+        ` : ''}
+      `
+
+      if (notificationsDiv.innerHTML.includes('No notifications yet')) {
+        notificationsDiv.innerHTML = ''
+      }
+
+      notificationsDiv.insertBefore(notifItem, notificationsDiv.firstChild)
+
+      // Remove 'new' class after animation
+      setTimeout(() => notifItem.classList.remove('new'), 3000)
+    }
+
+    // Initialize Socket.IO
+    function initializeSocket(token) {
+      if (socket) {
+        socket.disconnect()
+      }
+
+      socket = io(API_URL, {
+        auth: { token },
+        transports: ['websocket', 'polling']
+      })
+
+      socket.on('connect', () => {
+        console.log('✅ Socket connected')
+        socketStatus.className = 'connection-status connected'
+        showStatus('✅ Connected to notification service', 'success')
+      })
+
+      socket.on('disconnect', () => {
+        console.log('❌ Socket disconnected')
+        socketStatus.className = 'connection-status disconnected'
+      })
+
+      socket.on('login_notification', (data) => {
+        console.log('🔐 Login notification received:', data)
+        addNotification(data)
+        
+        // Show browser notification if supported
+        if ('Notification' in window && Notification.permission === 'granted') {
+          new Notification(data.title, {
+            body: data.message,
+            icon: '/icon-192x192.png'
+          })
+        }
+      })
+    }
+
+    // Login function
+    async function login() {
+      const email = document.getElementById('email').value
+      const password = document.getElementById('password').value
+
+      if (!email || !password) {
+        showStatus('❌ Please enter email and password', 'error')
+        return
+      }
+
+      loginBtn.disabled = true
+      loginBtn.textContent = 'Logging in...'
+      showStatus('⏳ Logging in...', 'info')
+
+      try {
+        const response = await fetch(`${API_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        })
+
+        const data = await response.json()
+
+        if (response.ok) {
+          authToken = data.data.token
+          showStatus(`✅ Login successful! Notifications are being sent...`, 'success')
+          
+          // Initialize Socket.IO
+          initializeSocket(authToken)
+
+          // Show push enable button
+          if ('Notification' in window && Notification.permission !== 'granted') {
+            enablePushBtn.style.display = 'block'
+          }
+
+          // Add a notification for successful login
+          setTimeout(() => {
+            addNotification({
+              title: '✅ Login Successful',
+              message: `Welcome back, ${data.data.user.profile.firstName || 'User'}!`,
+              loginInfo: null
+            })
+          }, 500)
+
+          showStatus(`✅ Check your email (${email}) for login notification!`, 'success')
+        } else {
+          showStatus(`❌ Login failed: ${data.message}`, 'error')
+        }
+      } catch (error) {
+        console.error('Login error:', error)
+        showStatus(`❌ Error: ${error.message}`, 'error')
+      } finally {
+        loginBtn.disabled = false
+        loginBtn.textContent = 'Login & Test Notifications'
+      }
+    }
+
+    // Enable push notifications
+    async function enablePushNotifications() {
+      if (!('Notification' in window)) {
+        showStatus('❌ Push notifications not supported', 'error')
+        return
+      }
+
+      try {
+        const permission = await Notification.requestPermission()
+        
+        if (permission === 'granted') {
+          showStatus('✅ Push notifications enabled!', 'success')
+          enablePushBtn.style.display = 'none'
+
+          // In a real app, you would:
+          // 1. Register service worker
+          // 2. Get push subscription
+          // 3. Send subscription to backend
+          console.log('Push notifications enabled')
+        } else {
+          showStatus('❌ Push permission denied', 'error')
+        }
+      } catch (error) {
+        showStatus(`❌ Error: ${error.message}`, 'error')
+      }
+    }
+
+    // Event listeners
+    loginBtn.addEventListener('click', login)
+    enablePushBtn.addEventListener('click', enablePushNotifications)
+
+    // Allow Enter key to login
+    document.getElementById('password').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        login()
+      }
+    })
+
+    // Initial message
+    showStatus('👆 Enter credentials and click Login to test notifications', 'info')
+  </script>
+</body>
+</html>

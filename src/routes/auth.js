@@ -5,7 +5,10 @@ const crypto = require("crypto")
 const User = require("../models/User")
 const { authenticate } = require("../middleware/auth")
 const { validateRegister, validateLogin } = require("../middleware/validation")
-const { sendWelcomeEmail, sendPasswordResetEmail, sendAdminWelcomeEmail, sendStaffWelcomeEmail } = require("../services/emailService")
+const { sendWelcomeEmail, sendPasswordResetEmail, sendAdminWelcomeEmail, sendStaffWelcomeEmail, sendLoginNotificationEmail } = require("../services/emailService")
+const { sendPushNotification } = require("../services/pushService")
+const { getSocketIO } = require("../services/socketService")
+const { getLoginInfo } = require("../utils/loginHelper")
 
 const router = express.Router()
 
@@ -274,12 +277,63 @@ router.post("/login", validateLogin, async (req, res) => {
       })
     }
 
+    // Extract login information
+    const loginInfo = getLoginInfo(req)
+
     // Update last login
     user.lastLogin = new Date()
     await user.save()
 
     // Generate token
     const token = generateToken(user._id)
+
+    // Send login notifications asynchronously (non-blocking)
+    setImmediate(async () => {
+      try {
+        // 1. Send Email Notification
+        await sendLoginNotificationEmail(user.email, user.profile.firstName, loginInfo)
+        console.log(`✅ Login email notification sent to ${user.email}`)
+      } catch (emailError) {
+        console.error("Failed to send login email notification:", emailError)
+      }
+
+      try {
+        // 2. Send Web Push Notification
+        if (user.preferences.pushNotifications && user.pushSubscription) {
+          await sendPushNotification(user._id, {
+            title: '🔐 New Login Detected',
+            body: `Login from ${loginInfo.location} at ${new Date().toLocaleTimeString()}`,
+            icon: '/icon-192x192.png',
+            data: {
+              type: 'login_notification',
+              loginInfo: loginInfo,
+              timestamp: new Date().toISOString()
+            },
+            url: '/dashboard'
+          })
+          console.log(`✅ Web push notification sent to user ${user._id}`)
+        }
+      } catch (pushError) {
+        console.error("Failed to send push notification:", pushError)
+      }
+
+      try {
+        // 3. Send Socket.IO Real-time Notification
+        const io = getSocketIO()
+        if (io) {
+          io.to(`user_${user._id}`).emit('login_notification', {
+            type: 'login_notification',
+            title: '🔐 New Login Detected',
+            message: `Login from ${loginInfo.location}`,
+            loginInfo: loginInfo,
+            timestamp: new Date().toISOString()
+          })
+          console.log(`✅ Socket notification sent to user ${user._id}`)
+        }
+      } catch (socketError) {
+        console.error("Failed to send socket notification:", socketError)
+      }
+    })
 
     res.json({
       status: "success",
@@ -761,6 +815,59 @@ router.put("/preferences", authenticate, async (req, res) => {
     res.status(500).json({
       status: "error",
       message: "Failed to update preferences",
+    })
+  }
+})
+
+// @desc    Save push notification subscription
+// @route   POST /api/auth/push-subscription
+// @access  Private
+router.post("/push-subscription", authenticate, async (req, res) => {
+  try {
+    const { endpoint, keys } = req.body
+
+    if (!endpoint || !keys) {
+      return res.status(400).json({
+        status: "error",
+        message: "Subscription endpoint and keys are required",
+      })
+    }
+
+    const user = await User.findById(req.user._id)
+    user.pushSubscription = { endpoint, keys }
+    await user.save()
+
+    res.json({
+      status: "success",
+      message: "Push subscription saved successfully",
+    })
+  } catch (error) {
+    console.error("Save push subscription error:", error)
+    res.status(500).json({
+      status: "error",
+      message: "Failed to save push subscription",
+    })
+  }
+})
+
+// @desc    Remove push notification subscription
+// @route   DELETE /api/auth/push-subscription
+// @access  Private
+router.delete("/push-subscription", authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+    user.pushSubscription = undefined
+    await user.save()
+
+    res.json({
+      status: "success",
+      message: "Push subscription removed successfully",
+    })
+  } catch (error) {
+    console.error("Remove push subscription error:", error)
+    res.status(500).json({
+      status: "error",
+      message: "Failed to remove push subscription",
     })
   }
 })
